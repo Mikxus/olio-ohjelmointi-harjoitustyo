@@ -1,5 +1,7 @@
 package com.project.app;
 
+import atlantafx.base.theme.PrimerDark;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,6 +12,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+
         Button btn = new Button("Login with Authentik");
         btn.setOnAction(event -> {
             System.out.println("Opening browser for Authentik...");

@@ -10,6 +10,10 @@ javafx {
     modules = listOf("javafx.controls")
 }
 
+dependencies {
+    implementation("io.github.mkpaz:atlantafx-base:2.1.0")
+}
+
 application {
     mainClass.set("com.project.app.Main")
 }
