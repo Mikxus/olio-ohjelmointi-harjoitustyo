@@ -9,5 +9,5 @@ public class AppNavigator {
         this.stage = stage;
     }
 
-    public void showLogin() {stage.setScene();}
+    public void showLogin() {}
 }
