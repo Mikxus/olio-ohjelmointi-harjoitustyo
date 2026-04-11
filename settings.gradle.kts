@@ -9,6 +9,7 @@
 rootProject.name = "harjoitustyo"
 //include(":common")
 include(":desktop-app")
+include(":backend")
 
 pluginManagement {
 	repositories {
