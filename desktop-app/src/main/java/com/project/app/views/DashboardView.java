@@ -10,7 +10,7 @@ import com.project.app.navigation.AppNavigator;
 public class DashboardView extends AbstractView {
     
     public DashboardView(AppNavigator navigator) {
-        super(navigator, 300, 600);
+        super(navigator, 900, 600);
     }
 
     @Override
