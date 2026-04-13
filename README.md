@@ -8,19 +8,15 @@ Simple java desktop application with java backend
 - Backend Java
     - Quarkus providing rest api
 
-## Building
+## Running
 
 Clone git repo
 ```bash
 git clone https://github.com/Mikxus/olio-ohjelmointi-harjoitustyo.git
 ```
 
-Build the project
-```bash
-gradle build
-```
 
 To run locally
 ```
-gradle run
+./gradlew run
 ```
