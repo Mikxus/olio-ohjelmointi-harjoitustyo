@@ -23,7 +23,6 @@ public class LoginView extends AbstractView {
     @Override
     protected final Parent build() {
         var icon = new FontIcon(Material2MZ.VPN_KEY);
-
         var vbox_layout = new VBox(20);
         var server_url = new UrlTextField("Server address", "https://test.mikxus.dev");
 
@@ -34,12 +33,13 @@ public class LoginView extends AbstractView {
         vbox_layout.setAlignment(javafx.geometry.Pos.TOP_CENTER);
 
         Button btn = new Button("Login with Authentik");
+        btn.disableProperty().bind(server_url.validProperty().not());
         btn.setOnAction(event -> {
             System.out.println("Opening browser for Authentik...");
             navigator.showDashboard();
         });
 
-        vbox_layout.getChildren().addAll(icon, server_url);
+        vbox_layout.getChildren().addAll(icon, server_url, btn);
         return vbox_layout;
     }
 
