@@ -1,11 +1,9 @@
 package com.project.app;
 
-import atlantafx.base.theme.PrimerDark;
+import com.project.app.navigation.AppNavigator;
 
+import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -13,19 +11,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+        AppNavigator nav = new AppNavigator(primaryStage); 
 
-        Button btn = new Button("Login with Authentik");
-        btn.setOnAction(event -> {
-            System.out.println("Opening browser for Authentik...");
-            // TODO: Add OAuth logic.
-        });
-
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
-
-        primaryStage.setTitle("My Java App");
-        primaryStage.setScene(new Scene(root, 400, 300));
-        primaryStage.show();
+        nav.showLogin();
+        System.out.println("After showLogin");
     }
 
     public static void main(String[] args) {
