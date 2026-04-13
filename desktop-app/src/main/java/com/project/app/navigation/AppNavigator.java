@@ -1,5 +1,9 @@
 package com.project.app.navigation;
+
 import javafx.stage.Stage;
+
+import com.project.app.views.LoginView;
+import com.project.app.views.DashboardView;
 
 // object to have all app's different views 
 public class AppNavigator {
@@ -9,5 +13,13 @@ public class AppNavigator {
         this.stage = stage;
     }
 
-    public void showLogin() {}
+    public void showLogin() {
+        stage.setScene(new LoginView(this).createScene());
+        stage.show();
+    }
+
+    public void showDashboard() {
+        stage.setScene(new DashboardView(this).createScene());
+        stage.show();
+    }
 }
