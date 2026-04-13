@@ -16,7 +16,6 @@ allprojects {
     version = "1.0-SNAPSHOT"
 }
 
-// 3. Common Java configuration for all sub-modules
 subprojects {
     apply(plugin = "java")
 
@@ -25,7 +24,6 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // This ensures all your modules use the same encoding (prevents "works on my machine" bugs)
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
     }
