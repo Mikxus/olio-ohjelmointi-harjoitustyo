@@ -42,5 +42,8 @@ public class LoginView extends AbstractView {
         vbox_layout.getChildren().addAll(icon, server_url);
         return vbox_layout;
     }
+
+    @Override
+    public String getTitle() {return "Login";}
 }
 
