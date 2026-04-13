@@ -4,17 +4,16 @@ import javafx.animation.PauseTransition;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.Group;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.control.TextField;
 import javafx.util.Duration;
 
-import atlantafx.base.layout.InputGroup;
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.theme.Styles;
 
+import java.util.function.Consumer;
 import java.net.URL;
 import java.net.URI;
 
@@ -22,36 +21,68 @@ import java.net.URI;
  *  Simple url input box 
  */
 public class UrlTextField extends VBox {
-    private final Text header_txt;
+    private final Text headerText;
     private final CustomTextField input;
 
     private final ReadOnlyBooleanWrapper valid = new ReadOnlyBooleanWrapper(false);
+    private final ObjectProperty<Consumer<String>> onValidUrl = new SimpleObjectProperty<>();
 
     public UrlTextField(String header_name, String hint) {
-        this.header_txt = new Text(header_name);
+        this.headerText = new Text(header_name);
         this.input = new CustomTextField();
 
         setSpacing(6);
         setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-    	header_txt.getStyleClass().addAll(Styles.TITLE_1);
+    	headerText.getStyleClass().addAll(Styles.TITLE_1);
 		input.setPromptText(hint);
 
-        this.getChildren().addAll(header_txt, input);
+        this.getChildren().addAll(headerText, input);
 
         /* Detect when user is done with inputting the url */
         PauseTransition pause = new PauseTransition(Duration.millis(500));
         input.textProperty().addListener((obs, oldVal, newVal) -> {
-            pause.setOnFinished(e -> isValidUrl(newVal));
+            pause.setOnFinished(e -> {
+                boolean empty = this.input.textProperty().isEmpty().get();
+                isValidUrl(newVal);
+
+                if (empty) {
+                    this.input.pseudoClassStateChanged(Styles.STATE_SUCCESS, false);
+                    this.input.pseudoClassStateChanged(Styles.STATE_DANGER, false);
+                } else {
+                    this.input.pseudoClassStateChanged(Styles.STATE_SUCCESS, isValid());
+                    this.input.pseudoClassStateChanged(Styles.STATE_DANGER, !isValid());
+                }
+
+                // Handle custom callback when we have valid url
+                Consumer<String> validCb = onValidUrl.get();
+                if (validCb != null && valid.get() == true)
+                        validCb.accept(newVal);
+            });
             pause.playFromStart();
         });
     }
+
+    public ObjectProperty<Consumer<String>> onValidUrlProperty() {return onValidUrl;}
+    public void setOnValidUrl(Consumer<String> cb) {onValidUrl.set(cb);}
+
+    /**
+     * Get textfield's textproperty
+     * @return
+     */
+    public StringProperty textProperty() {return this.input.textProperty();}
+
+    /**
+     * Get user inputted text
+     * @return
+     */
+    public String getText() {return this.input.getText();}
 
     /**
      * Get url validity ReadOnlyBooleanProperty
      * Updates automatically as user inputs valid URL
      */
-    public ReadOnlyBooleanProperty validProperty() {return valid.getReadOnlyProperty();}
+    public ReadOnlyBooleanProperty validProperty() {return this.valid.getReadOnlyProperty();}
 
     /**
      * Get Url valid status
@@ -62,6 +93,7 @@ public class UrlTextField extends VBox {
 
     /**
      * Validates that the user input is valid url with https protocol
+     * updates valid property
      * @param value
      * @return
      */
@@ -75,7 +107,7 @@ public class UrlTextField extends VBox {
             return false;
        } 
 
-       // only allow https 
+       // only allow https
        if ("https".compareToIgnoreCase(address.getProtocol()) != 0) {
             System.out.printf("incorrect protcol used: %s, Input url: %s\n",
                 address.getProtocol(), value);
