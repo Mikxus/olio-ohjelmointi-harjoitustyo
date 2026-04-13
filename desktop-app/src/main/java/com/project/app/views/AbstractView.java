@@ -14,6 +14,7 @@ public abstract class AbstractView {
     
     /* Window size per view */
     protected int width, height;
+    protected String Title;
     
     protected AbstractView(AppNavigator navigator, int width, int height) {
         this.navigator = navigator;
@@ -26,6 +27,8 @@ public abstract class AbstractView {
         this.width = 640;
         this.height = 360;
     }
+
+    public String getTitle() {return "Harjoitustyö";}
 
     // Each page provides its root ui node
     protected abstract Parent build();
