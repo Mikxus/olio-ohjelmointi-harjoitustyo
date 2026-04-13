@@ -14,12 +14,16 @@ public class AppNavigator {
     }
 
     public void showLogin() {
-        stage.setScene(new LoginView(this).createScene());
+        var view = new LoginView(this);
+        stage.setScene(view.createScene());
+        stage.setTitle(view.getTitle());
         stage.show();
     }
 
     public void showDashboard() {
-        stage.setScene(new DashboardView(this).createScene());
+        var view = new DashboardView(this);
+        stage.setScene(view.createScene());
+        stage.setTitle(view.getTitle());
         stage.show();
     }
 }
