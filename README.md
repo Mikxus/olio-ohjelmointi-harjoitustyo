@@ -24,9 +24,10 @@ Simple java desktop application with java backend
     - Set ```Authorization flow``` to explicit
     - Set ```Client type``` to public
     - Copy ```Client ID``` to .env's ```AUTHENTIK_CLIENT_ID``` parameter
-    - Set ```Redirect URIs/Origins``` to ```regex``` and ```^http://127\.0\.0\.1:(2[0-9]{4}|[3-4][0-9]{4}|50000)/callback$``` **Replace** YOURPORT with the ```AUTHENTIK_CB_PORT``` defined in .env
+    - Set ```Redirect URIs/Origins``` to ```regex``` and ```^http://127\.0\.0\.1:(2[0-9]{4}|[3-4][0-9]{4}|50000)/callback$```
 5. You're done
-
+    - Authentication endpoint should be under ```https://example.com/application/o/authorize/```
+    - And token endpoint ```https://example.com/application/o/token/```
 ## Dev setup
 Clone git repo
 ```bash
