@@ -1,5 +1,7 @@
 package com.project.app.component;
 
+import com.project.common.Config;
+
 import javafx.animation.PauseTransition;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
