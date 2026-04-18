@@ -12,7 +12,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.project.app.navigation.AppNavigator;
-import com.project.app.component.UrlTextField;;
+import com.project.app.component.UrlTextField;
+import com.project.app.auth.AuthFlow;
 
 public class LoginView extends AbstractView {
     
@@ -36,6 +37,13 @@ public class LoginView extends AbstractView {
         btn.disableProperty().bind(server_url.validProperty().not());
         btn.setOnAction(event -> {
             System.out.println("Opening browser for Authentik...");
+            AuthFlow auth = new AuthFlow();
+            try {
+                auth.loginAndGetCode();
+            } catch (Exception e) {
+                System.err.printf("Login failed Exception: %s", e);
+            }
+
             navigator.showDashboard();
         });
 
