@@ -6,9 +6,29 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.testing.Test
+import java.io.File
 
 plugins {
 
+}
+
+fun loadDotEnv(file: File): Map<String, String> {
+    if (!file.exists()) return emptyMap()
+
+    return file.readLines()
+        .asSequence()
+        .map { it.trim() }
+        .filter { it.isNotEmpty() && !it.startsWith("#") && it.contains("=") }
+        .map { line ->
+            val idx = line.indexOf("=")
+            val key = line.substring(0, idx).trim()
+            val value = line.substring(idx + 1).trim()
+                .removeSurrounding("\"")
+                .removeSurrounding("'")
+            key to value
+        }
+        .toMap()
 }
 
 allprojects {
@@ -17,6 +37,8 @@ allprojects {
 }
 
 subprojects {
+    val dotEnv = loadDotEnv(rootProject.file(".env"))
+
     apply(plugin = "java")
 
     extensions.configure<JavaPluginExtension> {
@@ -26,5 +48,13 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+    }
+
+    tasks.withType<JavaExec>().configureEach {
+        environment(dotEnv)
+    }
+
+    tasks.withType<Test>().configureEach {
+        environment(dotEnv)
     }
 }
