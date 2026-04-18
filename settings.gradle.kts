@@ -7,7 +7,7 @@
  */
 
 rootProject.name = "harjoitustyo"
-//include(":common")
+include(":common")
 include(":desktop-app")
 include(":backend")
 
