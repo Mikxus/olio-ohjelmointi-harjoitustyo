@@ -11,6 +11,9 @@ javafx {
 }
 
 dependencies {
+    implementation(project(":common"))
+    implementation("com.google.oauth-client:google-oauth-client:1.39.0")
+    implementation("com.google.http-client:google-http-client-gson:2.1.0")
     implementation("io.github.mkpaz:atlantafx-base:2.1.0")
     implementation("org.kordamp.ikonli:ikonli-javafx:12.4.0") // icons for app
     implementation("org.kordamp.ikonli:ikonli-material2-pack:12.4.0") // material2 icon pack
