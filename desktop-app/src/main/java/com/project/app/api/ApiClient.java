@@ -2,20 +2,36 @@ package com.project.app.api;
 
 import com.project.app.auth.AuthFlow;
 
+
 /* Google Oauth2 */
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
+
+/* google json parser */
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /* Apis */
 import com.project.common.api.StatusApi;
 import com.project.common.api.dto.StatusResponse;
+import com.project.common.api.LahjatApi;
+import com.project.common.api.dto.LahjatResponse;
+import com.project.common.api.dto.LahjaDto;
 
-public class ApiClient implements StatusApi {
+import java.io.IOException;
+/* DataTypes */
+import java.lang.IllegalStateException;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ApiClient implements StatusApi, LahjatApi {
     private String baseUrl;
     private final AuthFlow auth;
 
@@ -62,6 +78,54 @@ public class ApiClient implements StatusApi {
         } catch (Exception e) {
             System.err.println("Failed to fetch status from " + statusUrl + "\nInfo: " + e);
             return new StatusResponse(false);
+        }
+    }
+
+    @Override
+    public LahjatResponse getLahjat(int count) throws IllegalStateException {
+        GenericUrl url = new GenericUrl(buildUrl("/lahjat"));
+        HttpRequestFactory rf = auth.createAuthorizedRequestFactory();
+
+        url.put("count", count);
+        try {
+            HttpRequest req = rf.buildGetRequest(url);
+            HttpResponse response = req.execute();
+
+            /* Possible failures: 
+             *  - Unauthenticated
+             *  - ?
+             */
+            if (response.getStatusCode() != 200) {
+                throw new IllegalStateException("Invalid response code: " + String.valueOf(response.getStatusCode()))
+            }
+
+            try {
+                String responseBody = response.parseAsString();
+                JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+
+                if (json.has("lahjat") == false || json.get("lahjat").isJsonArray() == false) {
+                    throw new IllegalStateException("Invalid response: " + json.toString());
+                }
+
+                JsonArray items = json.getAsJsonArray("lahjat");
+                List<LahjaDto> lahjat = new ArrayList<LahjaDto>();
+
+                for (JsonElement item : items) {
+                    JsonObject obj = item.getAsJsonObject();
+
+                    lahjat.add(new LahjaDto(
+                        obj.get("id").getAsLong(),
+                        OffsetDateTime.parse(obj.get("created_at").getAsString()),
+                        obj.get("lahja").getAsString(),
+                        obj.get("hinta").getAsBigDecimal(),
+                        obj.get("valmistaja").getAsString()));
+                }
+
+                return new LahjatResponse(lahjat);
+            }
+
+        } catch (IOException e) {
+            System.out.println("getLahjat(): Request failed to: " + url.toString() + " Reason: "  + e.toString());
         }
     }
 
