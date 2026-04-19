@@ -38,3 +38,7 @@ To run locally
 ```
 ./gradlew run
 ```
+
+### Known issues
+#### Login page
+    - Freezes on status requests. Would need a rewrite to do network calls in a another thread
