@@ -7,8 +7,9 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /* Apis */
 import com.project.common.api.StatusApi;
@@ -49,14 +50,18 @@ public class ApiClient implements StatusApi {
             HttpRequest request = rf.buildGetRequest(new GenericUrl(statusUrl));
             HttpResponse response = request.execute();
             try {
-                return GsonFactory.getDefaultInstance()
-                        .createJsonParser(response.getContent())
-                        .parse(StatusResponse.class);
+                String responseBody = response.parseAsString();
+                JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+                boolean status = json.has("status")
+                        && !json.get("status").isJsonNull()
+                        && json.get("status").getAsBoolean();
+                return new StatusResponse(status);
             } finally {
                 response.disconnect();
             }
-        } catch (Exception exception) {
-            throw new IllegalStateException("Failed to fetch status from " + statusUrl, exception);
+        } catch (Exception e) {
+            System.err.println("Failed to fetch status from " + statusUrl + "\nInfo: " + e);
+            return new StatusResponse(false);
         }
     }
 
