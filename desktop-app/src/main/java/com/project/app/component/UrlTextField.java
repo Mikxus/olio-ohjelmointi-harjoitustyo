@@ -100,25 +100,33 @@ public class UrlTextField extends VBox {
      * @return
      */
     private boolean isValidUrl(String value) {
-       URL address;
-       try {
-            address = new URI(value).toURL();
-       } catch (Exception e) {
-            System.out.printf("Invalid url: %s exception %s\n", value, e);
-            valid.set(false);
-            return false;
-       } 
+		URL address;
+		try {
+				address = new URI(value).toURL();
+		} catch (Exception e) {
+				System.out.printf("Invalid url: %s exception %s\n", value, e);
+				valid.set(false);
+				return false;
+		} 
 
-       // only allow https
-       if ("https".compareToIgnoreCase(address.getProtocol()) != 0) {
-            System.out.printf("incorrect protcol used: %s, Input url: %s\n",
-                address.getProtocol(), value);
-            valid.set(false);
-            return false;
-       }
+		/* Allow http if .env allows it */
+		if (Config.allowHTTP() == true && "http".compareToIgnoreCase(address.getProtocol()) != 0) {
+			System.out.printf("incorrect protcol used: %s, Input url: %s\n",
+				address.getProtocol(), value);
+			valid.set(false);
+			return false;
+		}
 
-       System.out.printf("Valid url inputted: %s\n", value);
-       valid.set(true);
-       return true;
+		// only allow https
+		if ("https".compareToIgnoreCase(address.getProtocol()) != 0) {
+			System.out.printf("incorrect protcol used: %s, Input url: %s\n",
+				address.getProtocol(), value);
+			valid.set(false);
+			return false;
+		}
+
+		System.out.printf("Valid url inputted: %s\n", value);
+		valid.set(true);
+		return true;
     }
 }
