@@ -16,8 +16,9 @@ import javax.management.RuntimeErrorException;
 import javax.print.DocFlavor.STRING;
 import javax.sql.DataSource;
 
-import jakarta.inject.Inject;
+import io.quarkus.security.Authenticated;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -32,6 +33,7 @@ public class LahjatResource implements LahjatApi {
 
     @Override
     @GET
+	@Authenticated
     @Produces(MediaType.APPLICATION_JSON)
     public LahjatResponse getLahjat(@QueryParam("count") @DefaultValue("10") int count) {
 		List<LahjaDto> lahjat = new ArrayList<LahjaDto>();
