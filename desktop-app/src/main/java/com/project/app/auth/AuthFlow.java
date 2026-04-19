@@ -6,6 +6,7 @@ import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -16,7 +17,6 @@ import com.project.common.Config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.security.SecureRandom;
@@ -104,12 +104,11 @@ public class AuthFlow {
                 .build();
     }
 
-    private Credential loadCredential() throws IOException {
+    protected Credential loadCredential() throws IOException {
         return buildFlow().loadCredential(Config.getOauthUserID());
     }
 
-    public boolean isAuthorized() throws IOException {
-        Credential credential = loadCredential();
+    public boolean isAuthorized(Credential credential) throws IOException {
         if (credential == null) {
             return false;
         }
@@ -126,12 +125,40 @@ public class AuthFlow {
         return credential.refreshToken();
     }
 
+    public boolean isAuthorized() throws IOException {
+        return this.isAuthorized(this.loadCredential());
+    }
+
     public boolean authorizeIfNeeded() throws Exception {
         if (isAuthorized()) {
             return true;
         }
         loginAndGetCode();
         return isAuthorized();
+    }
+
+    /**
+     * Get authorized request factory
+     * usage:   HttpRequestFactory rf = authFlow.createAuthorizedRequestFactory();
+     *          HttpRequest req = rf.buildGetRequest(new GenericUrl(baseUrl + "/api/status"));
+     *          HttpResponse res = req.execute();
+     * @return
+     * @throws IOException
+     * @throws IllegalStateException
+     */
+    public HttpRequestFactory createAuthorizedRequestFactory() throws IOException, IllegalStateException {
+        Credential cred = null;
+
+        if (isAuthorized() == false) {
+            throw new IllegalStateException("User is not authorized");
+        }
+        
+        cred = loadCredential();
+        if (cred == null) {
+            throw new IllegalStateException("User is not authorized");
+        }
+
+        return HTTP_TRANSPORT.createRequestFactory(cred);
     }
 
     public void loginAndGetCode() throws Exception {
