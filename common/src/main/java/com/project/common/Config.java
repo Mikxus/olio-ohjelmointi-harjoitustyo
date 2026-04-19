@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 import java.nio.file.Path;
 
 /**
- * Environment-backed app configuration helpers.
+ * Config helpers
  */
 public final class Config {
     private Config() {}
