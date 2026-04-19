@@ -109,7 +109,6 @@ public class UrlTextField extends VBox {
 				return false;
 		} 
 
-		System.out.println("Config allow http: " + Config.allowHTTP());
 		/* Allow http if .env allows it */
 		if (Config.allowHTTP() == true && "http".compareToIgnoreCase(address.getProtocol()) == 0) {
 			System.out.printf("HTTP protocol used: %s, Input url: %s\n",
