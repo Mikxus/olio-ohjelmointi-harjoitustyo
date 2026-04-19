@@ -22,6 +22,11 @@ public class AppNavigator {
     }
 
     public void showLogin() {
+        if (auth.isAuthorized() == true) {
+            showDashboard();
+            return;
+        }
+
         var view = new LoginView(this, this.api, this.auth);
         stage.setScene(view.createScene());
         stage.setTitle(view.getTitle());
