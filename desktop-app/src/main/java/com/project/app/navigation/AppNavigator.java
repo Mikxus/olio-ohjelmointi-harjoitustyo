@@ -4,6 +4,7 @@ import javafx.stage.Stage;
 
 /* UI views */
 import com.project.app.views.LoginView;
+import com.project.common.Config;
 import com.project.app.views.DashboardView;
 
 /* Api & Auth */
@@ -22,7 +23,8 @@ public class AppNavigator {
     }
 
     public void showLogin() {
-        if (auth.isAuthorized() == true) {
+        if (auth.isAuthorized() == true && Config.isBackendUrl() == true) {
+            api.setBaseUrl(Config.getBackendUrl());
             showDashboard();
             return;
         }
