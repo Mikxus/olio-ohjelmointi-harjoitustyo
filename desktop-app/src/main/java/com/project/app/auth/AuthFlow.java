@@ -125,8 +125,12 @@ public class AuthFlow {
         return credential.refreshToken();
     }
 
-    public boolean isAuthorized() throws IOException {
-        return this.isAuthorized(this.loadCredential());
+    public boolean isAuthorized() {
+        try {
+            return this.isAuthorized(this.loadCredential());
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public boolean authorizeIfNeeded() throws Exception {
@@ -169,6 +173,7 @@ public class AuthFlow {
         /* 
          * Authentik expects 20k - 50k ports to be used
          * to prevent used ports halting authentication
+         * todo: do port randomization
          */
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", CALLBACK_PORT), 0);
         int port = server.getAddress().getPort();
