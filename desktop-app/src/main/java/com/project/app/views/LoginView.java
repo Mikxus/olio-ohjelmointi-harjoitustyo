@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
+import atlantafx.base.theme.Styles;
 
 /* Icons */
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -16,13 +16,13 @@ import com.project.app.navigation.AppNavigator;
 import com.project.app.component.UrlTextField;
 
 /* Api & Auth */
+import com.project.common.api.dto.StatusResponse;
 import com.project.app.api.ApiClient;
 import com.project.app.auth.AuthFlow;
 
 public class LoginView extends AbstractView {
-    
-    public LoginView(AppNavigator navigator, ApiClient api) {
-        super(navigator, api, 400, 600);
+    public LoginView(AppNavigator navigator, ApiClient api, AuthFlow auth) {
+        super(navigator, api, auth, 400, 600);
     }
 
     @Override
@@ -30,7 +30,9 @@ public class LoginView extends AbstractView {
         var icon = new FontIcon(Material2MZ.VPN_KEY);
         var vbox_layout = new VBox(20);
         var server_url = new UrlTextField("Server address", "https://test.mikxus.dev");
-
+        Button btn = new Button("Login with Authentik");
+        btn.setDisable(true);
+        btn.getStyleClass().add(Styles.ACCENT);
         icon.setStyle("-fx-icon-size: 96;");
 
         // Layout
@@ -38,21 +40,27 @@ public class LoginView extends AbstractView {
         vbox_layout.setAlignment(javafx.geometry.Pos.TOP_CENTER);
 
         /* Listen when user inputs valid url -> try to contact api/status */
-        server_url.validProperty().addListener((newVal) -> {
-            boolean status = false;
-            api.setBaseUrl(newVal.toString());
+        server_url.setOnValidUrl((newVal) -> {
+            StatusResponse status;
+            api.setBaseUrl(server_url.getText());
             status = api.getStatus();
+            
+            if (status.status()) {
+                btn.getStyleClass().add(Styles.SUCCESS);
+            } else {
+                btn.getStyleClass().add(Styles.ACCENT);
+            }
+            
+            btn.setDisable(!status.status());
         });
 
-        Button btn = new Button("Login with Authentik");
-        btn.disableProperty().bind(server_url.validProperty().not());
         btn.setOnAction(event -> {
             System.out.println("Opening browser for Authentik...");
-            AuthFlow auth = new AuthFlow();
             try {
-                auth.loginAndGetCode();
+                this.auth.loginAndGetCode();
             } catch (Exception e) {
                 System.err.printf("Login failed Exception: %s", e);
+                return;
             }
 
             navigator.showDashboard();
