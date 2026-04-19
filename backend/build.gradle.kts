@@ -10,6 +10,7 @@ dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:3.35.0.CR1"))
     implementation("com.auth0:java-jwt:4.5.1")
     implementation("io.quarkus:quarkus-rest")
+    implementation("io.quarkus:quarkus-rest-jackson")
 }
 
 application {
