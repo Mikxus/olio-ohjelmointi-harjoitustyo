@@ -14,7 +14,7 @@ import org.kordamp.ikonli.material2.Material2MZ;
 /* UI */
 import com.project.app.navigation.AppNavigator;
 import com.project.app.component.UrlTextField;
-
+import com.project.common.Config;
 /* Api & Auth */
 import com.project.common.api.dto.StatusResponse;
 import com.project.app.api.ApiClient;
@@ -43,6 +43,7 @@ public class LoginView extends AbstractView {
         server_url.setOnValidUrl((newVal) -> {
             StatusResponse status;
             api.setBaseUrl(server_url.getText());
+            Config.setBackendUrl(server_url.getText());
             status = api.getStatus();
             
             if (status.status()) {
