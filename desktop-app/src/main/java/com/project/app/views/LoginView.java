@@ -7,18 +7,22 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 
-// Icons
+/* Icons */
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2MZ;
 
+/* UI */
 import com.project.app.navigation.AppNavigator;
 import com.project.app.component.UrlTextField;
+
+/* Api & Auth */
+import com.project.app.api.ApiClient;
 import com.project.app.auth.AuthFlow;
 
 public class LoginView extends AbstractView {
     
-    public LoginView(AppNavigator navigator) {
-        super(navigator, 400, 600);
+    public LoginView(AppNavigator navigator, ApiClient api) {
+        super(navigator, api, 400, 600);
     }
 
     @Override
@@ -32,6 +36,13 @@ public class LoginView extends AbstractView {
         // Layout
         vbox_layout.setPadding(new Insets(30, 20, 0, 20));
         vbox_layout.setAlignment(javafx.geometry.Pos.TOP_CENTER);
+
+        /* Listen when user inputs valid url -> try to contact api/status */
+        server_url.validProperty().addListener((newVal) -> {
+            boolean status = false;
+            api.setBaseUrl(newVal.toString());
+            status = api.getStatus();
+        });
 
         Button btn = new Button("Login with Authentik");
         btn.disableProperty().bind(server_url.validProperty().not());

@@ -2,6 +2,8 @@ package com.project.app.views;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+
+import com.project.app.api.ApiClient;
 import com.project.app.navigation.AppNavigator;
 
 /* 
@@ -11,19 +13,22 @@ import com.project.app.navigation.AppNavigator;
  */
 public abstract class AbstractView {
     protected final AppNavigator navigator;
-    
+    protected final ApiClient api;
+
     /* Window size per view */
     protected int width, height;
     protected String Title;
     
-    protected AbstractView(AppNavigator navigator, int width, int height) {
+    protected AbstractView(AppNavigator navigator, ApiClient api, int width, int height) {
         this.navigator = navigator;
+        this.api = api;
         this.width = width;
         this.height = height;
     }
 
-    protected AbstractView(AppNavigator navigator) {
+    protected AbstractView(AppNavigator navigator, ApiClient api) {
         this.navigator = navigator;
+        this.api = api;
         this.width = 640;
         this.height = 360;
     }
