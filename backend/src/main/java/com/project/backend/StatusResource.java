@@ -12,8 +12,8 @@ import jakarta.ws.rs.core.MediaType;
 public class StatusResource implements StatusApi {
     @Override
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public StatusResponse getStatus() {
-        return true;
+        return new StatusResponse(true);
     }
 }
