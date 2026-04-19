@@ -82,12 +82,13 @@ public class ApiClient implements StatusApi, LahjatApi {
     }
 
     @Override
-    public LahjatResponse getLahjat(int count) throws IllegalStateException {
+    public LahjatResponse getLahjat(int count) {
         GenericUrl url = new GenericUrl(buildUrl("/lahjat"));
-        HttpRequestFactory rf = auth.createAuthorizedRequestFactory();
+        HttpRequestFactory rf;
 
         url.put("count", count);
         try {
+            rf = auth.createAuthorizedRequestFactory();
             HttpRequest req = rf.buildGetRequest(url);
             HttpResponse response = req.execute();
 
@@ -96,7 +97,7 @@ public class ApiClient implements StatusApi, LahjatApi {
              *  - ?
              */
             if (response.getStatusCode() != 200) {
-                throw new IllegalStateException("Invalid response code: " + String.valueOf(response.getStatusCode()))
+                throw new IllegalStateException("Invalid response code: " + String.valueOf(response.getStatusCode()));
             }
 
             try {
@@ -122,10 +123,13 @@ public class ApiClient implements StatusApi, LahjatApi {
                 }
 
                 return new LahjatResponse(lahjat);
+            } finally {
+                response.disconnect();
             }
 
         } catch (IOException e) {
             System.out.println("getLahjat(): Request failed to: " + url.toString() + " Reason: "  + e.toString());
+            return new LahjatResponse(List.of());
         }
     }
 
