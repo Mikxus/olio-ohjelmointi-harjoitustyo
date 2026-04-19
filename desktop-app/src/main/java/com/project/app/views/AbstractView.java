@@ -4,6 +4,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import com.project.app.api.ApiClient;
+import com.project.app.auth.AuthFlow;
 import com.project.app.navigation.AppNavigator;
 
 /* 
@@ -14,21 +15,24 @@ import com.project.app.navigation.AppNavigator;
 public abstract class AbstractView {
     protected final AppNavigator navigator;
     protected final ApiClient api;
+    protected final AuthFlow auth;
 
     /* Window size per view */
     protected int width, height;
     protected String Title;
     
-    protected AbstractView(AppNavigator navigator, ApiClient api, int width, int height) {
+    protected AbstractView(AppNavigator navigator, ApiClient api, AuthFlow auth, int width, int height) {
         this.navigator = navigator;
         this.api = api;
+        this.auth = auth;
         this.width = width;
         this.height = height;
     }
 
-    protected AbstractView(AppNavigator navigator, ApiClient api) {
+    protected AbstractView(AppNavigator navigator, ApiClient api, AuthFlow auth) {
         this.navigator = navigator;
         this.api = api;
+        this.auth = auth;
         this.width = 640;
         this.height = 360;
     }

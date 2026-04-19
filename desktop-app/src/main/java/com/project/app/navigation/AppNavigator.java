@@ -22,14 +22,14 @@ public class AppNavigator {
     }
 
     public void showLogin() {
-        var view = new LoginView(this, this.api);
+        var view = new LoginView(this, this.api, this.auth);
         stage.setScene(view.createScene());
         stage.setTitle(view.getTitle());
         stage.show();
     }
 
     public void showDashboard() {
-        var view = new DashboardView(this, this.api);
+        var view = new DashboardView(this, this.api, this.auth);
         stage.setScene(view.createScene());
         stage.setTitle(view.getTitle());
         stage.show();

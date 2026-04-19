@@ -4,14 +4,14 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
-import com.project.app.views.AbstractView;
 import com.project.app.api.ApiClient;
+import com.project.app.auth.AuthFlow;
 import com.project.app.navigation.AppNavigator;
 
 public class DashboardView extends AbstractView {
     
-    public DashboardView(AppNavigator navigator, ApiClient api) {
-        super(navigator, api, 900, 600);
+    public DashboardView(AppNavigator navigator, ApiClient api, AuthFlow auth) {
+        super(navigator, api, auth, 900, 600);
     }
 
     @Override
