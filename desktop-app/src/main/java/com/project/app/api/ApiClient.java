@@ -1,8 +1,7 @@
 package com.project.app.api;
 
 import com.project.app.auth.AuthFlow;
-
-
+import com.google.api.client.http.ByteArrayContent;
 /* Google Oauth2 */
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -15,42 +14,41 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+import com.project.common.Config;
 /* Apis */
-import com.project.common.api.StatusApi;
-import com.project.common.api.dto.StatusResponse;
-import com.project.common.api.LahjatApi;
-import com.project.common.api.dto.LahjatResponse;
-import com.project.common.api.dto.LahjaDto;
+import com.project.common.api.*;
+import com.project.common.api.dto.*;
 
-import java.io.IOException;
 /* DataTypes */
+import java.io.IOException;
 import java.lang.IllegalStateException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ApiClient implements StatusApi, LahjatApi {
-    private String baseUrl;
+    private String backendUrl;
     private final AuthFlow auth;
 
     public ApiClient(String baseUrl, AuthFlow auth) {
-        this.baseUrl = baseUrl;
+        this.backendUrl = baseUrl;
         this.auth = auth;
     }
 
     public ApiClient(AuthFlow auth) {
-        this.baseUrl = "";
+        this.backendUrl = "";
         this.auth = auth;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public void setBackendUrl(String baseUrl) {
+        this.backendUrl = baseUrl;
+        Config.setBackendUrl(baseUrl);
     }
 
-    public boolean isBaseUrl() {
-        if (baseUrl == null || baseUrl.isBlank()) {
+    public boolean isBackendUrl() {
+        if (backendUrl == null || backendUrl.isBlank()) {
             return false;
         }
         return true;
@@ -109,17 +107,18 @@ public class ApiClient implements StatusApi, LahjatApi {
                 }
 
                 JsonArray items = json.getAsJsonArray("lahjat");
-                List<LahjaDto> lahjat = new ArrayList<LahjaDto>();
+                List<LahjaGetObj> lahjat = new ArrayList<LahjaGetObj>();
 
                 for (JsonElement item : items) {
                     JsonObject obj = item.getAsJsonObject();
 
-                    lahjat.add(new LahjaDto(
+                    lahjat.add(new LahjaGetObj(
                         obj.get("id").getAsLong(),
                         OffsetDateTime.parse(obj.get("created_at").getAsString()),
                         obj.get("lahja").getAsString(),
                         obj.get("hinta").getAsBigDecimal(),
-                        obj.get("valmistaja").getAsString()));
+                        obj.get("valmistaja").getAsString(),
+                        obj.get("saaja").getAsString()));
                 }
 
                 return new LahjatResponse(lahjat);
@@ -133,15 +132,50 @@ public class ApiClient implements StatusApi, LahjatApi {
         }
     }
 
+    @Override
+    public StatusResponse createLahja(LahjaCreateRequestObj request) {
+        GenericUrl url = new GenericUrl(buildUrl("/lahjat"));
+
+        try {
+            HttpRequestFactory rf = auth.createAuthorizedRequestFactory();
+            JsonObject body = new JsonObject();
+            body.addProperty("lahja", request.lahja());
+            body.addProperty("hinta", request.hinta());
+            body.addProperty("valmistaja", request.valmistaja());
+            body.addProperty("saaja", request.saaja());
+            
+            ByteArrayContent content = new ByteArrayContent(
+                "application/json",
+                body.toString().getBytes(StandardCharsets.UTF_8)
+            );
+
+            HttpRequest req = rf.buildPostRequest(url, content);
+            req.getHeaders().setContentType("application/json");    
+            HttpResponse resp = null;
+
+            try {
+                resp = req.execute();
+            } finally {
+                if (resp != null)
+                    resp.disconnect();
+            }
+        
+        } catch (Exception ex) {
+            // TODO: exception handling
+        }
+
+        return new StatusResponse(false);
+    }
+
     private String buildUrl(String path) {
-        if (baseUrl.endsWith("/") && path.startsWith("/")) {
-            return baseUrl + path.substring(1);
+        if (backendUrl.endsWith("/") && path.startsWith("/")) {
+            return backendUrl + path.substring(1);
         }
 
-        if (!baseUrl.endsWith("/") && !path.startsWith("/")) {
-            return baseUrl + "/" + path;
+        if (!backendUrl.endsWith("/") && !path.startsWith("/")) {
+            return backendUrl + "/" + path;
         }
 
-        return baseUrl + path;
+        return backendUrl + path;
     }
 }
