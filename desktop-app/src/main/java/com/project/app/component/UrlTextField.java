@@ -29,7 +29,7 @@ public class UrlTextField extends VBox {
     private final ReadOnlyBooleanWrapper valid = new ReadOnlyBooleanWrapper(false);
     private final ObjectProperty<Consumer<String>> onValidUrl = new SimpleObjectProperty<>();
 
-    public UrlTextField(String header_name, String hint) {
+    public UrlTextField(String header_name, String text) {
         this.headerText = new Text(header_name);
         this.input = new CustomTextField();
 
@@ -37,7 +37,7 @@ public class UrlTextField extends VBox {
         setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
     	headerText.getStyleClass().addAll(Styles.TITLE_1);
-		input.setPromptText(hint);
+		input.setText(text);
 
         this.getChildren().addAll(headerText, input);
 
