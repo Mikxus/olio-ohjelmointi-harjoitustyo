@@ -15,7 +15,7 @@ import com.project.app.auth.AuthFlow;
 public class AppNavigator {
     private final Stage stage;
     private final AuthFlow auth = new AuthFlow();
-    private final ApiClient api = new ApiClient("", auth);
+    private final ApiClient api = new ApiClient(Config.getBackendUrl(), auth);
 
 
     public AppNavigator(Stage stage) {
@@ -24,7 +24,7 @@ public class AppNavigator {
 
     public void showLogin() {
         if (auth.isAuthorized() == true && Config.isBackendUrl() == true) {
-            api.setBaseUrl(Config.getBackendUrl());
+            api.setBackendUrl(Config.getBackendUrl());
             showDashboard();
             return;
         }
