@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS lahjat (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     lahja TEXT NOT NULL,
     hinta NUMERIC NOT NULL,
-    valmistaja TEXT NOT NULL
+    valmistaja TEXT NOT NULL,
+    saaja TEXT NOT NULL
 );
