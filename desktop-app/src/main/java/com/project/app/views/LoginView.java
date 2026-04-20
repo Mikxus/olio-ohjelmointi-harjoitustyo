@@ -29,7 +29,7 @@ public class LoginView extends AbstractView {
     protected final Parent build() {
         var icon = new FontIcon(Material2MZ.VPN_KEY);
         var vbox_layout = new VBox(20);
-        var server_url = new UrlTextField("Server address", "https://test.mikxus.dev");
+        var server_url = new UrlTextField("Server address", Config.getBackendUrl());
         Button btn = new Button("Login with Authentik");
         btn.setDisable(true);
         btn.getStyleClass().add(Styles.ACCENT);
@@ -42,8 +42,7 @@ public class LoginView extends AbstractView {
         /* Listen when user inputs valid url -> try to contact api/status */
         server_url.setOnValidUrl((newVal) -> {
             StatusResponse status;
-            api.setBaseUrl(server_url.getText());
-            Config.setBackendUrl(server_url.getText());
+            api.setBackendUrl(server_url.getText());
             status = api.getStatus();
             
             if (status.status()) {
